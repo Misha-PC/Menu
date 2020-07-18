@@ -1,37 +1,52 @@
 #if !defined(MENULEVEL_H)
 #define MENULEVEL_H
 
+#define DEBUG
+
+
 #include <Arduino.h>
 
 class MenuLevel{
 private:
+// public:
+    enum itemType{
+        SUBITEM, HANDLER
+    };
     class IMenuItem{
     public:
         String name;
         IMenuItem* pNext;
+        virtual itemType getType();
     };
 
-    class MenuSubItem:IMenuItem{
+    class MenuSubItem:public IMenuItem{
     public:
-        MenuLevel* pNextLevel;
         MenuSubItem(String name, MenuLevel* pNextLevel);
+        MenuLevel* pNextLevel;
+        itemType getType() override{
+            return itemType::SUBITEM;
+        }
     };
 
-    class MenuHandler:IMenuItem{
+    class MenuHandler:public IMenuItem{
     public:
-        void (*handler)();
         MenuHandler(String name, void (*handler));
+        void (*handler)();
+        itemType getType() override{
+            return itemType::HANDLER;
+        }
     };
 
     IMenuItem* getLast();
     IMenuItem* pFirst;
-    uint8_t    counter;
+    uint8_t    size;
     
 public:
     MenuLevel();
 
-    void addMenuItem   (String name, MenuLevel* pNextLevel);
-    void addMenuHandler(String name, void (*handler)      );
+    void    addMenuItem   (String name, MenuLevel* pNextLevel);
+    void    addMenuHandler(String name, void (*handler)      );
+    uint8_t getSize();
 
 
     // operator

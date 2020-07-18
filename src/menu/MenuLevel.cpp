@@ -4,7 +4,7 @@
 
 MenuLevel::MenuLevel(){
     pFirst  = nullptr;
-    counter = 0;
+    size = 0;
 }
 
 MenuLevel::IMenuItem* MenuLevel::getLast(){
@@ -24,7 +24,32 @@ void MenuLevel::addMenuHandler(String name, void (*handler)){
         pFirst = new MenuHandler(name, handler);
     }
     else{
-        IMenuItem* last = getLast();
-
+        IMenuItem* curent = getLast();
+        curent->pNext = new MenuHandler(name, handler);
     }
+    size++;
+}
+
+void MenuLevel::addMenuItem(String name, MenuLevel* pNextLevel){
+    if(pFirst  == nullptr){
+    #ifdef DEBUG
+        Serial.print("Create first menu item: ");
+        Serial.println(name);
+    #endif
+        pFirst = new MenuSubItem(name, pNextLevel);
+    }
+    else{
+        IMenuItem* curent = getLast();
+        // curent->pNext = new MenuSubItem(name, pNextLevel);
+    #ifdef DEBUG
+        Serial.print("Create not first menu item: ");
+        Serial.println(name);
+    #endif
+    }
+    size++;
+}
+
+
+uint8_t MenuLevel::getSize(){
+    return size;
 }
